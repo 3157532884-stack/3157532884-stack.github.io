@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>华北电力大学工程训练中心 - 创新创业管理系统</title>
+    
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            
+            /* 导航项悬停效果 */
+            .nav-item-hover {
+                transition: all 0.3s ease;
+            }
+            .nav-item-hover:hover {
+                border: 2px solid #3B82F6;
+                background-color: rgba(59, 130, 246, 0.1);
+            }
+            
+            /* 动画效果 */
+            .slide-up {
+                animation: slideUp 0.6s ease-out;
+            }
+            @keyframes slideUp {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
+            
+            .fade-in {
+                animation: fadeIn 0.5s ease-in;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .pulse-animation {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+            
+            /* 轮播图样式 */
+            .carousel-item {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                transition: opacity 0.8s ease-in-out;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+            .carousel-item.active {
+                opacity: 1;
+            }
+            
+            /* 轮播箭头样式 */
+            .carousel-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: rgba(255, 255, 255, 0.9);
+                color: #1E40AF;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                z-index: 10;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+            .carousel-arrow:hover {
+                background-color: #1E40AF;
+                color: white;
+                transform: translateY(-50%) scale(1.1);
+            }
+            .carousel-arrow.left {
+                left: 20px;
+            }
+            .carousel-arrow.right {
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 页面容器 -->
+    <div id="app">
+        <!-- 初始页面 (图1和图2) -->
+        <div id="homePage" class="min-h-screen">
+            <!-- 顶部导航栏 -->
+            <nav class="bg-primary text-white py-4 shadow-lg">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center">
+                        <!-- Logo和标题 -->
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white p-2 rounded-lg">
+                                <i class="fa fa-graduation-cap text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-bold">华北电力大学（保定）</h1>
+                                <p class="text-sm text-blue-100">工程训练中心</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 登录按钮 -->
+                        <button id="homeLoginBtn" class="bg-white text-primary px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+                            <i class="fa fa-sign-in mr-2"></i>登录
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 中间导航菜单 -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex justify-center space-x-8 mb-8">
+                    <button class="nav-item-hover px-6 py-3 rounded-lg font-semibold text-gray-700" data-target="innovation">
+                        大创
+                    </button>
+                    <button class="nav-item-hover px-6 py-3 rounded-lg font-semibold text-gray-700" data-target="competition">
+                        竞赛
+                    </button>
+                    <button class="nav-item-hover px-6 py-3 rounded-lg font-semibold text-gray-700 bg-primary text-white" data-target="incubation">
+                        孵化项目
+                    </button>
+                    <button class="nav-item-hover px-6 py-3 rounded-lg font-semibold text-gray-700" data-target="robot">
+                        机器人俱乐部
+                    </button>
+                </div>
+
+                <!-- 主要内容区域 -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <!-- 项目列表 -->
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow duration-300">
+                            <div class="flex items-center space-x-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">23</div>
+                                    <div class="text-sm text-gray-500">2020.12</div>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">2020年12月大学生创新创业项目结项开始</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow duration-300">
+                            <div class="flex items-center space-x-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">23</div>
+                                    <div class="text-sm text-gray-500">2020.12</div>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">2020年12月大学生创新创业项目结项开始</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow duration-300">
+                            <div class="flex items-center space-x-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">23</div>
+                                    <div class="text-sm text-gray-500">2020.12</div>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">2020年12月大学生创新创业项目结项开始</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow duration-300">
+                            <div class="flex items-center space-x-6">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">23</div>
+                                    <div class="text-sm text-gray-500">2020.12</div>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">2020年12月大学生创新创业项目结项开始</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 查看更多按钮 -->
+                    <div class="text-center mt-8">
+                        <button class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                            查看更多 >>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部功能按钮 -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <button class="bg-primary text-white p-4 rounded-lg hover:bg-blue-700 transition-colors duration-300 text-center" id="innovationManageBtn">
+                        <i class="fa fa-book text-2xl mb-2"></i>
+                        <div class="font-semibold">大创管理</div>
+                    </button>
+                    <button class="bg-secondary text-white p-4 rounded-lg hover:bg-blue-600 transition-colors duration-300 text-center">
+                        <i class="fa fa-trophy text-2xl mb-2"></i>
+                        <div class="font-semibold">竞赛管理</div>
+                    </button>
+                    <button class="bg-secondary text-white p-4 rounded-lg hover:bg-blue-600 transition-colors duration-300 text-center">
+                        <i class="fa fa-lightbulb-o text-2xl mb-2"></i>
+                        <div class="font-semibold">孵化项目管理</div>
+                    </button>
+                    <button class="bg-secondary text-white p-4 rounded-lg hover:bg-blue-600 transition-colors duration-300 text-center">
+                        <i class="fa fa-flag text-2xl mb-2"></i>
+                        <div class="font-semibold">俱乐部管理</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 页脚 -->
+            <footer class="bg-gray-800 text-white py-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <p>&copy; 版权所有：华北电力大学（保定） Dre@match工作室</p>
+                </div>
+            </footer>
+        </div>
+
+        <!-- 登录页面 (图3) -->
+        <div id="loginPage" class="min-h-screen hidden bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2">
+                        <!-- 左侧图片区域 -->
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-8 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <div class="mb-6">
+                                    <img src="https://picsum.photos/id/180/200/200" alt="华北电力大学" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white/30">
+                                </div>
+                                <h2 class="text-3xl font-bold mb-4">华北电力大学</h2>
+                                <p class="text-xl mb-2">保定校区</p>
+                                <p class="text-blue-100">创新创业项目管理系统</p>
+                            </div>
+                        </div>
+
+                        <!-- 右侧登录表单 -->
+                        <div class="p-8">
+                            <div class="text-center mb-8">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">用户登录</h3>
+                                <p class="text-gray-600">请输入您的账户信息</p>
+                            </div>
+
+                            <form id="loginForm" class="space-y-6">
+                                <div>
+                                    <label class="block text-gray-700 font-semibold mb-2">用户名</label>
+                                    <input type="text" id="username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" placeholder="请输入用户名" required>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 font-semibold mb-2">密码</label>
+                                    <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" placeholder="请输入密码" required>
+                                </div>
+
+                                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1">
+                                    <i class="fa fa-sign-in mr-2"></i>登录
+                                </button>
+
+                                <div class="text-center text-gray-600">
+                                    <a href="#" class="text-primary hover:underline">忘记密码？</a>
+                                </div>
+                            </form>
+
+                            <!-- 返回首页按钮 -->
+                            <div class="text-center mt-8">
+                                <button id="backToHomeBtn" class="text-gray-600 hover:text-primary transition-colors duration-300">
+                                    <i class="fa fa-arrow-left mr-2"></i>返回首页
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 登录成功页面 (图4和图5) -->
+        <div id="successPage" class="min-h-screen hidden">
+            <!-- 顶部导航栏 -->
+            <nav class="bg-primary text-white py-4 shadow-lg sticky top-0 z-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center">
+                        <!-- Logo和标题 -->
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white p-2 rounded-lg">
+                                <i class="fa fa-graduation-cap text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-bold">华北电力大学（保定）</h1>
+                                <p class="text-sm text-blue-100">工程训练中心</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 用户信息 -->
+                        <div class="flex items-center space-x-4">
+                            <div class="text-right">
+                                <div class="font-semibold" id="successUsername">20240001</div>
+                                <div class="text-sm text-blue-100">大学生创新创业项目</div>
+                            </div>
+                            <button id="logoutBtn" class="text-white hover:text-red-200 transition-colors duration-300">
+                                <i class="fa fa-sign-out text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 登录成功提示 -->
+            <div id="successAlert" class="fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-500 z-50">
+                <div class="flex items-center">
+                    <i class="fa fa-check-circle mr-2"></i>
+                    <span>登录成功！</span>
+                </div>
+            </div>
+
+            <!-- 主要内容区域 -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- 轮播图区域 -->
+                <div class="mb-12">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl h-64 md:h-96">
+                        <!-- 轮播图片 -->
+                        <div class="carousel-item active" style="background-image: url('https://aka.doubaocdn.com/s/Ttt01vYkBP')">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                                <div class="text-white px-12">
+                                    <h2 class="text-4xl font-bold mb-4">创新创业</h2>
+                                    <p class="text-xl">培养创新精神，推动科技进步</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="carousel-item" style="background-image: url('https://aka.doubaocdn.com/s/s1wW1vYkBQ')">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                                <div class="text-white px-12">
+                                    <h2 class="text-4xl font-bold mb-4">工程训练</h2>
+                                    <p class="text-xl">实践出真知，技能成就未来</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="carousel-item" style="background-image: url('https://aka.doubaocdn.com/s/th5C1vYkBP')">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                                <div class="text-white px-12">
+                                    <h2 class="text-4xl font-bold mb-4">团队协作</h2>
+                                    <p class="text-xl">集思广益，共创辉煌</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="carousel-item" style="background-image: url('https://aka.doubaocdn.com/s/IV741vYkBP')">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                                <div class="text-white px-12">
+                                    <h2 class="text-4xl font-bold mb-4">电力创新</h2>
+                                    <p class="text-xl">探索电力奥秘，推动能源革命</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="carousel-item" style="background-image: url('https://aka.doubaocdn.com/s/MelL1vYkBP')">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                                <div class="text-white px-12">
+                                    <h2 class="text-4xl font-bold mb-4">成果展示</h2>
+                                    <p class="text-xl">创新成就梦想，奋斗铸就辉煌</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 轮播箭头 -->
+                        <div class="carousel-arrow left" id="prevBtn">
+                            <i class="fa fa-chevron-left"></i>
+                        </div>
+                        <div class="carousel-arrow right" id="nextBtn">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                        
+                        <!-- 轮播指示器 -->
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                            <button class="w-3 h-3 rounded-full bg-white opacity-100 carousel-indicator active"></button>
+                            <button class="w-3 h-3 rounded-full bg-white opacity-50 carousel-indicator"></button>
+                            <button class="w-3 h-3 rounded-full bg-white opacity-50 carousel-indicator"></button>
+                            <button class="w-3 h-3 rounded-full bg-white opacity-50 carousel-indicator"></button>
+                            <button class="w-3 h-3 rounded-full bg-white opacity-50 carousel-indicator"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 功能模块 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer text-center">
+                        <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-file-text-o text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">项目申报</h3>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer text-center">
+                        <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-clock-o text-2xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">进展记录</h3>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer text-center">
+                        <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-user text-2xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">中期审核</h3>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer text-center">
+                        <div class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-gavel text-2xl text-orange-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">结项审核</h3>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer text-center">
+                        <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-money text-2xl text-red-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">项目报销</h3>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer text-center">
+                        <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-check-circle text-2xl text-teal-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">完成</h3>
+                    </div>
+                </div>
+
+                <!-- 最新公告 -->
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">最新公告</h2>
+                        <button class="text-primary hover:text-blue-700 font-semibold transition-colors duration-300">
+                            更多+
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 hover:text-primary transition-colors duration-300 cursor-pointer">2025年全国硕士研究生招生考试考场规则</h3>
+                            </div>
+                            <span class="text-gray-400 text-sm whitespace-nowrap ml-4">2024-11-04</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 hover:text-primary transition-colors duration-300 cursor-pointer">2025年全国硕士研究生招生考试（初试）华北电力大学考点公告</h3>
+                            </div>
+                            <span class="text-gray-400 text-sm whitespace-nowrap ml-4">2024-11-03</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 hover:text-primary transition-colors duration-300 cursor-pointer">关于2023级非全日制研究生文献综述与开题报告提交的通知</h3>
+                            </div>
+                            <span class="text-gray-400 text-sm whitespace-nowrap ml-4">2024-10-17</span>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 hover:text-primary transition-colors duration-300 cursor-pointer">华北电力大学2025年"少数民族高层次骨干人才计划"研究生招生简章</h3>
+                            </div>
+                            <span class="text-gray-400 text-sm whitespace-nowrap ml-4">2024-10-17</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷操作 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <button class="bg-blue-500 text-white p-6 rounded-xl hover:bg-blue-600 transition-colors duration-300 text-center">
+                        <i class="fa fa-edit text-3xl mb-3"></i>
+                        <h3 class="text-lg font-bold mb-2">项目申报</h3>
+                        <p class="text-blue-100">立即创建新项目</p>
+                    </button>
+
+                    <button class="bg-green-500 text-white p-6 rounded-xl hover:bg-green-600 transition-colors duration-300 text-center">
+                        <i class="fa fa-cubes text-3xl mb-3"></i>
+                        <h3 class="text-lg font-bold mb-2">项目管理</h3>
+                        <p class="text-green-100">管理已有项目</p>
+                    </button>
+
+                    <button class="bg-orange-500 text-white p-6 rounded-xl hover:bg-orange-600 transition-colors duration-300 text-center">
+                        <i class="fa fa-search text-3xl mb-3"></i>
+                        <h3 class="text-lg font-bold mb-2">查询公告</h3>
+                        <p class="text-orange-100">查看最新公告</p>
+                    </button>
+                </div>
+
+                <!-- 页脚 -->
+                <footer class="bg-gray-800 text-white py-6">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <p>&copy; 版权所有：华北电力大学（保定） Dre@match工作室</p>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素获取
+        const homePage = document.getElementById('homePage');
+        const loginPage = document.getElementById('loginPage');
+        const successPage = document.getElementById('successPage');
+        const successAlert = document.getElementById('successAlert');
+        
+        // 登录相关元素
+        const homeLoginBtn = document.getElementById('homeLoginBtn');
+        const innovationManageBtn = document.getElementById('innovationManageBtn');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const successUsername = document.getElementById('successUsername');
+
+        // 轮播图相关元素
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slides = document.querySelectorAll('.carousel-item');
+        const indicators = document.querySelectorAll('.carousel-indicator');
+
+        // 页面切换函数
+        function showPage(pageId) {
+            // 隐藏所有页面
+            homePage.classList.add('hidden');
+            loginPage.classList.add('hidden');
+            successPage.classList.add('hidden');
+            
+            // 显示指定页面
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            // 滚动到顶部
+            window.scrollTo(0, 0);
+        }
+
+        // 显示登录成功提示
+        function showSuccessAlert() {
+            successAlert.style.transform = 'translateX(0)';
+            setTimeout(() => {
+                successAlert.style.transform = 'translateX(100%)';
+            }, 3000);
+        }
+
+        // 轮播图功能实现
+        let currentSlide = 0;
+        let carouselInterval;
+
+        /**
+         * 显示指定幻灯片
+         * @param {number} index - 幻灯片索引
+         */
+        function showSlide(index) {
+            // 隐藏所有幻灯片
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // 显示当前幻灯片
+            slides[index].classList.add('active');
+            
+            // 更新指示器状态
+            indicators.forEach((indicator, i) => {
+                if (i === index) {
+                    indicator.classList.add('active');
+                    indicator.style.opacity = '1';
+                } else {
+                    indicator.classList.remove('active');
+                    indicator.style.opacity = '0.5';
+                }
+            });
+            
+            currentSlide = index;
+        }
+
+        /**
+         * 显示下一张幻灯片
+         */
+        function nextSlide() {
+            showSlide((currentSlide + 1) % slides.length);
+        }
+
+        /**
+         * 显示上一张幻灯片
+         */
+        function prevSlide() {
+            showSlide((currentSlide - 1 + slides.length) % slides.length);
+        }
+
+        /**
+         * 开始轮播图自动播放
+         */
+        function startCarousel() {
+            carouselInterval = setInterval(nextSlide, 5000);
+        }
+
+        /**
+         * 停止轮播图自动播放
+         */
+        function stopCarousel() {
+            clearInterval(carouselInterval);
+        }
+
+        // 事件监听器初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始显示首页
+            showPage('homePage');
+
+            // 首页登录按钮点击事件
+            homeLoginBtn.addEventListener('click', () => {
+                showPage('loginPage');
+            });
+
+            // 大创管理按钮点击事件（图2中的登录方式）
+            innovationManageBtn.addEventListener('click', () => {
+                showPage('loginPage');
+            });
+
+            // 返回首页按钮点击事件
+            backToHomeBtn.addEventListener('click', () => {
+                showPage('homePage');
+            });
+
+            // 登出按钮点击事件
+            logoutBtn.addEventListener('click', () => {
+                showPage('homePage');
+            });
+
+            // 登录表单提交事件
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+                
+                if (username && password) {
+                    // 保存用户名到成功页面
+                    successUsername.textContent = username || '20240001';
+                    
+                    // 切换到成功页面
+                    showPage('successPage');
+                    
+                    // 显示成功提示
+                    setTimeout(showSuccessAlert, 500);
+                    
+                    // 重置表单
+                    loginForm.reset();
+                    
+                    // 启动轮播图
+                    setTimeout(() => {
+                        showSlide(0);
+                        startCarousel();
+                    }, 1000);
+                } else {
+                    alert('请输入用户名和密码');
+                }
+            });
+
+            // 轮播图事件监听
+            if (prevBtn && nextBtn) {
+                // 上一张按钮点击事件
+                prevBtn.addEventListener('click', () => {
+                    prevSlide();
+                    stopCarousel();
+                    startCarousel();
+                });
+
+                // 下一张按钮点击事件
+                nextBtn.addEventListener('click', () => {
+                    nextSlide();
+                    stopCarousel();
+                    startCarousel();
+                });
+
+                // 指示器点击事件
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => {
+                        showSlide(index);
+                        stopCarousel();
+                        startCarousel();
+                    });
+                });
+
+                // 鼠标悬停暂停轮播
+                const carousel = document.querySelector('.relative.rounded-2xl');
+                if (carousel) {
+                    carousel.addEventListener('mouseenter', stopCarousel);
+                    carousel.addEventListener('mouseleave', startCarousel);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
